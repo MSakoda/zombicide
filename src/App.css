@@ -16,4 +16,16 @@
   margin: 2px;
   display:inline-block;
   cursor: pointer;
+  vertical-align: top;
+}
+
+.tile.default {
+    background: grey;
+}
+.tile.room {
+    background: steelblue;
+}
+
+.tile.starting {
+    background:lightgreen;
 }

@@ -9,6 +9,7 @@ export function Tile(tile) {
   }
   this.type = tile.type;
   this.typeChar = tile.typeChar;
+  this.startingTile = tile.startingTile;
 
   this.showTile = () => {
     console.log(`position: ${this.position.row}, ${this.position.col}`);
