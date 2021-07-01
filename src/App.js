@@ -1,23 +1,25 @@
-import logo from './logo.svg';
 import './App.css';
+import { Weapon, items } from './classes/Weapon';
+import { Board } from './classes/Board';
+import { GameBoard } from './components/board';
+// import { Player } from './classes/Player';
+// import { Tile } from './classes/Tile';
 
 function App() {
+  console.log("Zombicide");
+  console.log(`items:`,items);
+  let board = new Board();
+  board.buildBoard();
+  let weapon1 = new Weapon(items[0]);
+  console.log(`weapon1:`,weapon1);
+  function rebuildBoard(b) {
+    console.log(`about to rebuild board`);
+      b.buildBoard();
+  }
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Zombicide</h1>
+      <GameBoard board={board} />
     </div>
   );
 }
