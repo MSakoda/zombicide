@@ -5,7 +5,11 @@ function NewPlayer(props) {
     const [name, setName] = useState('');
 
     function createPlayer() {
-        props.createPlayer(name);
+        let nameVal = name.trim();
+        if (nameVal.length === 0) {
+          return;
+        }
+        props.handleCreatePlayer(name.trim());
         setName('');
     }
 

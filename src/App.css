@@ -2,13 +2,12 @@
   text-align: center;
 }
 
-.row {
- width: 750px;
- margin-left:auto;
- margin-right: auto;
+#board {
+  min-width:750px;
 }
+
 .tile {
-  width: 150px;
+  min-width: 150px;
   height:150px;
   border: 1px solid black;
   border-radius: 5px;
@@ -17,6 +16,18 @@
   display:inline-block;
   cursor: pointer;
   vertical-align: top;
+}
+
+.player {
+  width: 100%;
+  border: 1px solid silver;
+  border-radius: 5px;
+  margin: 10px;
+  padding: 10px;
+}
+
+.player.active {
+  border:1px solid green;
 }
 
 .tile.default {

@@ -13,6 +13,7 @@ export function Player(name) {
     row: 0,
     col: 0
   }
+  this.active = false;
 
   // place Player on tile
   this.place = tile => {

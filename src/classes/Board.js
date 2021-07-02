@@ -5,7 +5,7 @@ export function Board() {
   this.startingTile = null;
 
   this.buildBoard = () => {
-    console.log(`building board`);
+    // console.log(`building board`);
     // clear board
     this.tiles = [];
     // starting tile
