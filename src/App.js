@@ -20,16 +20,6 @@ function App() {
 
   const [phase, setPhase] = useState('player');
 
-  // function deleteBoard() {
-  //     setBoard(null);
-  // }
-  //
-  // //
-  // function rebuildBoard(b) {
-  //   let newBoard = new Board();
-  //   newBoard.buildBoard();
-  //   setBoard(newBoard);
-  // }
 
   function updatePhase() {
     let newPhase = '';
@@ -45,6 +35,22 @@ function App() {
     }
     setPhase(newPhase);
     console.log(`phase is now:`,phase);
+  }
+
+  function handleEndTurn(player,idx) {
+      console.log(`handling end turn with idx: ${idx}`);
+      // switch this players' active to false, and set next player's active to true
+      // if current active player is last in players array, set phase to zombie phase
+      if (idx === players.length - 1) {
+        console.log(`last player in players array, go to next phase`);
+        updatePhase();
+      } else {
+          // move active to next player
+          player.active = false;
+          players[idx+1].active = true;
+          let updatedPlayers = [...players];
+          setPlayers(updatedPlayers);
+      }
   }
 
   function handleCreatePlayer(name) {
@@ -112,7 +118,10 @@ function App() {
           }
           </div>
           <div className="col-md-3">
-            <Actions players={players} />
+            <Actions
+                phase={phase}
+                handleEndTurn={handleEndTurn}
+                players={players} />
           </div>
         </div>
       </div>

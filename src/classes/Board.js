@@ -3,6 +3,7 @@ import {Tile} from './Tile';
 export function Board() {
   this.tiles = [];
   this.startingTile = null;
+  this.spawnTiles = [];
 
   this.buildBoard = () => {
     // console.log(`building board`);
@@ -11,6 +12,12 @@ export function Board() {
     // starting tile
     let startingRow = Math.floor(Math.random() * 4);
     let startingCol = Math.floor(Math.random() * 4);
+    // spawn tiles
+    let spawnColumns = [];
+    for (let i = 0; i < 4; i++) {
+        spawnColumns.push(Math.floor(Math.random() * 4));
+    }
+    console.log(`spawnColumns:`,spawnColumns);
     for (var i = 0; i < 4; i++) {
       let row = [];
       for (var j = 0; j < 4; j++) {
@@ -22,11 +29,15 @@ export function Board() {
             row: i,
             col: j
             },
-          startingTile: i === startingRow && j === startingCol
+          startingTile: i === startingRow && j === startingCol,
+          spawnTile: j === spawnColumns[i]
         }
         let _tile = new Tile(tile);
         if (_tile.startingTile) {
             this.startingTile = _tile;
+        }
+        if (_tile.spawnTile) {
+            this.spawnTiles.push(_tile);
         }
         row.push(_tile);
       }

@@ -36,6 +36,9 @@
 .tile.room {
     background: steelblue;
 }
+.tile.spawn {
+    background: purple;
+}
 
 .tile.starting {
     background:lightgreen;

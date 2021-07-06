@@ -7,7 +7,7 @@ export function GameBoard(props) {
       tile.showTile();
   }
 
-
+  console.log(`building board with board:`,props.board);
   return (
     <div id="board">
       <h4>Gameboard</h4>
@@ -23,7 +23,7 @@ export function GameBoard(props) {
                 </div>
               })
             }
-            return <div onClick={() => handleClick(tile)} key={"tile_"+i+"_"+j} className={"tile " +  (tile.startingTile ? ' starting' : tile.type)}>
+            return <div onClick={() => handleClick(tile)} key={"tile_"+i+"_"+j} className={"tile " +  (tile.startingTile ? ' starting' : tile.type) + (tile.spawnTile ? ' spawn':'')}>
             <div>Type: {tile.type}</div>
               {tile.players.length > 0 &&
                 // <div>Players: {tile.players.length}</div>
