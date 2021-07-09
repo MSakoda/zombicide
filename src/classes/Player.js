@@ -14,6 +14,9 @@ export function Player(name) {
     col: 0
   }
   this.active = false;
+  this.actions = 0;
+  this.maxActions = 3;
+  this.health = 5;
 
   // place Player on tile
   this.place = tile => {
@@ -25,13 +28,52 @@ export function Player(name) {
     console.log(`Greetings. I am ${name}`);
   }
 
-  this.move = (board, direction) => {
-    // invalid inputs
-    if (!(board instanceof Board)) {
-      console.log(`A board is needed to move the player.`);
+  // Returns Bool determining if move is valid
+  this.canMoveDirection = direction => {
+    let newRow = this.position.row + direction[0];
+    let newCol = this.position.col + direction[1];
+    if (newRow < 0 || newRow > 3 || newCol < 0 || newCol > 3) {
+      return false;
+    }
+    return true;
+  }
+
+  // Returns Bool determinining if attack is valid
+  this.canAttack = tile => {
+    // check if enemies in current tile
+    if (tile.enemies.length > 0) {
+      if (this.weapons.length > 0) {
+        return true;
+      } else {
+        console.log(`no weapons, can't attack`);
+      }
+    }
+    return false;
+  }
+
+  this.canSearch = tile => {
+    return tile.type === 'room';
+  }
+
+  this.attack = tile => {
+    if (this.weapons.length == 0) {
+      console.log(`Can not attack without a weapon`);
       return;
     }
-    if (board.tiles.length === 0) {
+    if (tile.enemies.length == 0) {
+      console.log(`no enemies in tile to attack`);
+      return;
+    }
+    // check weapon range
+  }
+
+  this.move = (board, direction) => {
+    // invalid inputs
+    // if (!(board instanceof Board)) {
+    //   console.log(`A board is needed to move the player.`);
+    //   return;
+    // }
+    if (board.tiles && board.tiles.length === 0) {
       console.log(`Board needs to be built`);
       return;
     }
@@ -40,7 +82,8 @@ export function Player(name) {
     let nextTileRow = this.position.row + directions[direction][0];
     let nextTileCol = this.position.col + directions[direction][1];
 
-    if (nextTileRow < 0 || nextTileCol < 0 || !(board.tiles[nextTileRow][nextTileCol] instanceof Tile)) {
+
+    if (nextTileRow < 0 || nextTileCol < 0 || nextTileRow > 3 || nextTileCol > 3 || !(board.tiles[nextTileRow][nextTileCol] instanceof Tile)) {
       console.log(`Not a valid Tile, outside of bounds with row:${nextTileRow} and col:${nextTileCol}`);
       return;
     }
@@ -63,6 +106,9 @@ export function Player(name) {
     // update player position
     this.position.row = nextTileRow;
     this.position.col = nextTileCol;
+    // update player actions
+    this.actions -= 1;
+    console.log(`player actions after move:`,this.actions);
   }
 
   this.search = (tile) => {
@@ -72,13 +118,14 @@ export function Player(name) {
       return;
     }
 
-    if (tile === 'room') {
+    if (tile.type === 'room') {
       // get random item
       let item = items[Math.floor(Math.random() * items.length)];
       if (item.type === 'weapon') {
         let weapon = new Weapon(item);
         this.weapons.push(weapon);
         console.log(`found ${weapon.name} and added to inventory`);
+        this.actions -= 1;
       }
     } else {
       console.log(`can not search if not in a room`);

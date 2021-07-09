@@ -11,30 +11,63 @@ import { Enemy } from './classes/Enemy';
 // import { Tile } from './classes/Tile';
 
 function App() {
+  console.log(`running App`);
 
   let board1 = new Board();
   board1.buildBoard();
   const [board, setBoard] = useState(board1);
 
   const [players, setPlayers] = useState([]);
+  const [enemies, setEnemies] = useState([]);
 
   const [phase, setPhase] = useState('player');
 
 
   function updatePhase() {
     let newPhase = '';
-    switch(phase) {
-      case 'player':
-        newPhase = 'zombie';
-        break;
-      case 'zombie':
-        newPhase = 'spawn';
-        break;
-      default:
-        newPhase = 'player';
+    console.log("currPhase:",phase);
+
+    if (phase === 'player') {
+      newPhase = 'zombie';
+      handleZombiePhase();
+    } else if (phase === 'zombie') {
+      newPhase = 'spawn';
+    } else if (phase === 'spawn') {
+      newPhase = 'player';
+      handlePlayerPhase();
     }
     setPhase(newPhase);
-    console.log(`phase is now:`,phase);
+    console.log(`phase is now:`,newPhase);
+  }
+
+  function handlePlayerPhase() {
+    console.log(`handling player phase`);
+    // set first player to active
+    let player = players[0];
+    player.active = true;
+    player.actions = player.maxActions;
+
+    let updatedPlayers = [...players];
+    setPlayers(updatedPlayers);
+  }
+
+  function handleZombiePhase() {
+    console.log(`zombie phase`);
+    /* // TODO:
+      1. check if zombies exist
+      2. move them towards players
+      3. attack players if they are on same tile as player
+    */
+    // check if zombies exist
+    if (enemies.length > 0) {
+      console.log(`enemies:`,enemies);
+    } else {
+      console.log(`no zombies to move, next phase`);
+      setTimeout(() => {
+
+        updatePhase();
+      },5000)
+    }
   }
 
   function handleEndTurn(player,idx) {
@@ -43,6 +76,9 @@ function App() {
       // if current active player is last in players array, set phase to zombie phase
       if (idx === players.length - 1) {
         console.log(`last player in players array, go to next phase`);
+        player.active = false;
+        let updatedPlayers = [...players];
+        setPlayers(updatedPlayers);
         updatePhase();
       } else {
           // move active to next player
@@ -51,6 +87,28 @@ function App() {
           let updatedPlayers = [...players];
           setPlayers(updatedPlayers);
       }
+  }
+
+  function handleMove(player, direction, callback) {
+    console.log("running handleMove with player:",player,"and direction:",direction);
+    // try to move player
+    console.log(`board:`,board);
+    // console.log(`board instanceof Board:`,(board instanceof Board));
+    player.move(board, direction.direction.toLowerCase());
+    console.log(`player after move:`,player);
+    setPlayers([...players]);
+    setBoard({...board});
+    callback();
+  }
+
+  function handleSearch(player, callback) {
+    console.log(`running handleSearch with player:`,player);
+    // get tile
+    let playerTile = board.getTile(player.position.row, player.position.col);
+    player.search(playerTile);
+
+    setPlayers([...players]);
+    callback();
   }
 
   function handleCreatePlayer(name) {
@@ -64,6 +122,7 @@ function App() {
     // set to active if first player
     if (players.length === 0) {
       newPlayer.active = true;
+      newPlayer.actions = newPlayer.maxActions;
     }
 
     // create copy of players
@@ -101,6 +160,14 @@ function App() {
     let newEnemy = new Enemy({type:type, tile: randTile})
     console.log(`newEnemy:`,newEnemy);
     randTile.enemies.push(newEnemy);
+
+    // create copy of enemies
+    let updatedEnemy = [...enemies];
+    // add player to enemies array
+    updatedEnemy.push(newEnemy);
+    // update enemies state
+    setEnemies(updatedEnemy);
+
     let updatedBoard = {...board};
     setBoard(updatedBoard);
   }
@@ -120,14 +187,21 @@ function App() {
           <div className="col-md-3">
             <Actions
                 phase={phase}
+                board={board}
                 handleEndTurn={handleEndTurn}
+                handleSearch={handleSearch}
+                handleMove={handleMove}
                 players={players} />
           </div>
         </div>
       </div>
       <NewPlayer handleCreatePlayer={handleCreatePlayer} />
-      <button onClick={() => createEnemy()}>New Enemy</button>
-      <button onClick={() => updatePhase()}>Next Phase</button>
+      <div className="container">
+        <div className="row">
+          <button className="btn btn-primary offset-3 col-3 mr-1" onClick={() => createEnemy()}>New Enemy</button>
+          <button disabled={players.length === 0} className="btn btn-primary col-3" onClick={() => updatePhase()}>Next Phase</button>
+        </div>
+      </div>
     </div>
   );
 }
