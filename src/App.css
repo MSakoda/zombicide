@@ -8,8 +8,8 @@
 }
 
 .tile {
-  min-width: 150px;
-  height:150px;
+  width: 100px;
+  height:100px;
   border: 1px solid black;
   border-radius: 5px;
   padding: 2px;
@@ -17,6 +17,15 @@
   display:inline-block;
   cursor: pointer;
   vertical-align: top;
+}
+
+.legend {
+    vertical-align: top;
+    height:15px;
+    width:15px;
+    display:inline-block;
+    border-radius: 2px;
+    border: 1px solid black;
 }
 
 .player {
@@ -43,4 +52,25 @@
 
 .tile.starting {
     background:lightgreen;
+}
+
+.players {
+    position: relative;
+}
+
+.players::before {
+    --scale: 0;
+}
+
+.players:hover::before {
+    min-width:200px;
+    padding: 5px;
+    position: absolute;
+    background: gold;
+    content:attr(data-tooltip);
+    border-radius:5px;
+    border: 1px solid white;
+    left: 50%;
+    transform: translate(-50%, -100%);
+    transition: 50ms transform;
 }

@@ -11,6 +11,7 @@ export function GameBoard(props) {
   return (
     <div id="board">
       <h4>Gameboard</h4>
+      <p style={{'lineHeight':'1em'}}>Key: <div className="legend" style={{'background':'purple'}}></div> Zombie spawn <div className="legend" style={{'background':'lightgreen'}}></div> Survivor spawn <div className="legend" style={{'background':'steelblue'}}></div> Room <div className="legend" style={{'background':'grey'}}></div> Default</p>
       {props.board.tiles.map((row,i) => {
         return <div key={"row_"+i} >
           {row.map((tile,j) => {
@@ -23,12 +24,24 @@ export function GameBoard(props) {
                 </div>
               })
             }
-            return <div onClick={() => handleClick(tile)} key={"tile_"+i+"_"+j} className={"tile " +  (tile.startingTile ? ' starting' : tile.type) + (tile.spawnTile ? ' spawn':'')}>
-            <div>Type: {tile.type}</div>
+            return <div
+            onClick={() => handleClick(tile)}
+            title={tile.type}
+            key={"tile_"+i+"_"+j}
+            className={"tile " +  (tile.startingTile ? ' starting' : tile.type)}>
+              {tile.spawnTile &&
+                <div>Spawn</div>
+              }
+              {tile.startingTile &&
+                  <div>Starting</div>
+              }
+              {tile.startingTile && tile.type === "room" &&
+                <div>Room</div>
+              }
               {tile.players.length > 0 &&
                 // <div>Players: {tile.players.length}</div>
-                <div>Players:
-                {players}
+                <div data-tooltip={tile.players.map(p => p.name).join(", ")} class="players">Players:
+                {players.length}
                 </div>
               }
               {tile.enemies.length > 0 &&

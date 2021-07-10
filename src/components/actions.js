@@ -54,7 +54,7 @@ export function Actions(props) {
             }
             <div>
 
-            {props.phase === 'player' && !moving && !showInfo &&
+            {props.phase === 'player' && !moving && !showInfo && player.active &&
                 <div>
                     <div>
                       <button

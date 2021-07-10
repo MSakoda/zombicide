@@ -9,35 +9,47 @@ import React, { useState} from 'react';
 import { Player } from './classes/Player';
 import { Enemy } from './classes/Enemy';
 // import { Tile } from './classes/Tile';
+import { survivors } from './util';
 
 function App() {
   console.log(`running App`);
 
   let board1 = new Board();
   board1.buildBoard();
+
   const [board, setBoard] = useState(board1);
 
-  const [players, setPlayers] = useState([]);
+  const [players, setPlayers] = useState(buildSurvivors());
   const [enemies, setEnemies] = useState([]);
 
   const [phase, setPhase] = useState('player');
 
+  function buildSurvivors() {
+      let _survivors = [];
+      survivors.forEach((survivor,i) => {
+        let newSurvivor = new Player(survivor.name);
+        newSurvivor.place(board.startingTile);
+        if (i === 0) {
+            newSurvivor.active = true;
+            newSurvivor.actions = newSurvivor.maxActions;
+        }
+        _survivors.push(newSurvivor)
+      })
+      console.log(`_survivors:`,_survivors);
+      return _survivors;
+      // setPlayers(updatedPlayers);
+  }
 
   function updatePhase() {
-    let newPhase = '';
-    console.log("currPhase:",phase);
-
     if (phase === 'player') {
-      newPhase = 'zombie';
+      setPhase('zombie');
       handleZombiePhase();
     } else if (phase === 'zombie') {
-      newPhase = 'spawn';
+      setPhase('spawn');
     } else if (phase === 'spawn') {
-      newPhase = 'player';
+      setPhase('player');
       handlePlayerPhase();
     }
-    setPhase(newPhase);
-    console.log(`phase is now:`,newPhase);
   }
 
   function handlePlayerPhase() {
@@ -61,12 +73,6 @@ function App() {
     // check if zombies exist
     if (enemies.length > 0) {
       console.log(`enemies:`,enemies);
-    } else {
-      console.log(`no zombies to move, next phase`);
-      setTimeout(() => {
-
-        updatePhase();
-      },5000)
     }
   }
 
@@ -195,11 +201,9 @@ function App() {
           </div>
         </div>
       </div>
-      <NewPlayer handleCreatePlayer={handleCreatePlayer} />
       <div className="container">
         <div className="row">
-          <button className="btn btn-primary offset-3 col-3 mr-1" onClick={() => createEnemy()}>New Enemy</button>
-          <button disabled={players.length === 0} className="btn btn-primary col-3" onClick={() => updatePhase()}>Next Phase</button>
+          <button disabled={players.length === 0} className="btn btn-primary offset-3 col-3" onClick={() => updatePhase()}>Next Phase</button>
         </div>
       </div>
     </div>
