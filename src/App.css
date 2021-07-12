@@ -63,6 +63,7 @@
 }
 
 .players:hover::before {
+    z-index:1000;
     min-width:200px;
     padding: 5px;
     position: absolute;

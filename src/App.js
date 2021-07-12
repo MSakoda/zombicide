@@ -19,10 +19,14 @@ function App() {
 
   const [board, setBoard] = useState(board1);
 
-  const [players, setPlayers] = useState(buildSurvivors());
-  const [enemies, setEnemies] = useState([]);
+  const [players, setPlayers] = useState(() => {
+      return buildSurvivors();
+  })
+  const [enemies, setEnemies] = useState(() => []);
 
-  const [phase, setPhase] = useState('player');
+  const [phase, setPhase] = useState(() => {
+      return 'player';
+  });
 
   function buildSurvivors() {
       let _survivors = [];
@@ -58,9 +62,9 @@ function App() {
     let player = players[0];
     player.active = true;
     player.actions = player.maxActions;
-
-    let updatedPlayers = [...players];
-    setPlayers(updatedPlayers);
+    setPlayers(prevPlayers => {
+        return [...prevPlayers];
+    });
   }
 
   function handleZombiePhase() {
@@ -83,15 +87,13 @@ function App() {
       if (idx === players.length - 1) {
         console.log(`last player in players array, go to next phase`);
         player.active = false;
-        let updatedPlayers = [...players];
-        setPlayers(updatedPlayers);
+        setPlayers(prevPlayers => [...prevPlayers]);
         updatePhase();
       } else {
           // move active to next player
           player.active = false;
           players[idx+1].active = true;
-          let updatedPlayers = [...players];
-          setPlayers(updatedPlayers);
+          setPlayers(prevPlayers => [...prevPlayers]);
       }
   }
 
@@ -103,7 +105,9 @@ function App() {
     player.move(board, direction.direction.toLowerCase());
     console.log(`player after move:`,player);
     setPlayers([...players]);
-    setBoard({...board});
+    setBoard(prevBoard => {
+        return {...prevBoard};
+    });
     callback();
   }
 
@@ -113,7 +117,7 @@ function App() {
     let playerTile = board.getTile(player.position.row, player.position.col);
     player.search(playerTile);
 
-    setPlayers([...players]);
+    setPlayers(prevPlayers => [...prevPlayers]);
     callback();
   }
 
@@ -136,12 +140,13 @@ function App() {
     // add player to players array
     updatedPlayers.push(newPlayer);
     // update players state
-    setPlayers(updatedPlayers);
+    setPlayers(prevPlayers => [...updatedPlayers]);
 
     // create copy of board
-    let updatedBoard = {...board};
     // update state with board copy
-    setBoard(updatedBoard);
+    setBoard(prevBoard => {
+        return {...prevBoard};
+    });
   }
 
   function createEnemy() {
@@ -167,15 +172,14 @@ function App() {
     console.log(`newEnemy:`,newEnemy);
     randTile.enemies.push(newEnemy);
 
-    // create copy of enemies
-    let updatedEnemy = [...enemies];
-    // add player to enemies array
-    updatedEnemy.push(newEnemy);
     // update enemies state
-    setEnemies(updatedEnemy);
+    setEnemies(prevEnemies => {
+        return [...prevEnemies,newEnemy];
+    })
 
-    let updatedBoard = {...board};
-    setBoard(updatedBoard);
+    setBoard(prevBoard => {
+        return {...prevBoard};
+    });
   }
 
   return (

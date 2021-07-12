@@ -7,11 +7,10 @@ export function GameBoard(props) {
       tile.showTile();
   }
 
-  console.log(`building board with board:`,props.board);
   return (
     <div id="board">
       <h4>Gameboard</h4>
-      <p style={{'lineHeight':'1em'}}>Key: <div className="legend" style={{'background':'purple'}}></div> Zombie spawn <div className="legend" style={{'background':'lightgreen'}}></div> Survivor spawn <div className="legend" style={{'background':'steelblue'}}></div> Room <div className="legend" style={{'background':'grey'}}></div> Default</p>
+      <div className="mb-2" style={{'lineHeight':'1em'}}>Key: <div className="legend" style={{'background':'purple'}}></div> Zombie spawn <div className="legend" style={{'background':'lightgreen'}}></div> Survivor spawn <div className="legend" style={{'background':'steelblue'}}></div> Room <div className="legend" style={{'background':'grey'}}></div> Default</div>
       {props.board.tiles.map((row,i) => {
         return <div key={"row_"+i} >
           {row.map((tile,j) => {
@@ -40,7 +39,7 @@ export function GameBoard(props) {
               }
               {tile.players.length > 0 &&
                 // <div>Players: {tile.players.length}</div>
-                <div data-tooltip={tile.players.map(p => p.name).join(", ")} class="players">Players:
+                <div data-tooltip={tile.players.map(p => p.name).join(", ")} className="players">Players:
                 {players.length}
                 </div>
               }

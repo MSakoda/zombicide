@@ -1,7 +1,6 @@
 import { useState } from 'react';
 
 export function Actions(props) {
-  console.log("action props:",props)
 
   const [moving, setMoving] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
@@ -111,7 +110,7 @@ export function Actions(props) {
               </div>
             }
 
-            {moving &&
+            {moving && player.active &&
               <div>
                 <div>Directions</div>
                 {directions.map((direction => {
