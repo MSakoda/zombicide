@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 // import { Weapon, items } from './classes/Weapon';
 import { Board } from './classes/Board';
 import { GameBoard } from './components/board';
+import { Gamelog } from './components/gamelog';
 import { Actions } from './components/actions';
 import NewPlayer from './components/newPlayer';
 import React, { useState} from 'react';
@@ -17,6 +18,7 @@ function App() {
   let board1 = new Board();
   board1.buildBoard();
 
+  const [logs, setLogs] = useState(() => []);
   const [board, setBoard] = useState(board1);
 
   const [players, setPlayers] = useState(() => {
@@ -27,6 +29,15 @@ function App() {
   const [phase, setPhase] = useState(() => {
       return 'player';
   });
+
+  function addLog(log){
+    let date = new Date();
+    console.log(`date:`,date);
+    let updatedLog = `${date.toLocaleTimeString()} - ${log}`;
+    setLogs(prevLogs => {
+      return [...prevLogs,updatedLog];
+    })
+  }
 
   function buildSurvivors() {
       let _survivors = [];
@@ -47,11 +58,19 @@ function App() {
   function updatePhase() {
     if (phase === 'player') {
       setPhase('zombie');
-      handleZombiePhase();
+      if (enemies.length > 0) {
+        addLog("Phase is now Zombie Phase");
+        handleZombiePhase();
+      } else {
+        addLog('Phase is now Spawn Phase');
+        setPhase('spawn');
+      }
     } else if (phase === 'zombie') {
+      addLog("Phase is now Spawn Phase");
       setPhase('spawn');
     } else if (phase === 'spawn') {
       setPhase('player');
+      addLog("Phase is now Player Phase");
       handlePlayerPhase();
     }
   }
@@ -77,6 +96,9 @@ function App() {
     // check if zombies exist
     if (enemies.length > 0) {
       console.log(`enemies:`,enemies);
+    } else {
+      console.log(`update to spawn phase`);
+      updatePhase();
     }
   }
 
@@ -93,6 +115,8 @@ function App() {
           // move active to next player
           player.active = false;
           players[idx+1].active = true;
+          // update player's actions
+          players[idx+1].actions = players[idx+1].maxActions;
           setPlayers(prevPlayers => [...prevPlayers]);
       }
   }
@@ -104,10 +128,11 @@ function App() {
     // console.log(`board instanceof Board:`,(board instanceof Board));
     player.move(board, direction.direction.toLowerCase());
     console.log(`player after move:`,player);
-    setPlayers([...players]);
+    setPlayers(prevPlayers => [...prevPlayers]);
     setBoard(prevBoard => {
         return {...prevBoard};
     });
+    addLog(`${player.name} moved.`);
     callback();
   }
 
@@ -117,6 +142,7 @@ function App() {
     let playerTile = board.getTile(player.position.row, player.position.col);
     player.search(playerTile);
 
+    addLog(`${player.name} searched.`);
     setPlayers(prevPlayers => [...prevPlayers]);
     callback();
   }
@@ -193,6 +219,7 @@ function App() {
           {board &&
             <GameBoard board={board} />
           }
+          <Gamelog logs={logs} />
           </div>
           <div className="col-md-3">
             <Actions

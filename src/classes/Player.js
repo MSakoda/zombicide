@@ -30,6 +30,7 @@ export function Player(name) {
 
   // Returns Bool determining if move is valid
   this.canMoveDirection = direction => {
+    if (this.actions == 0) return false;
     let newRow = this.position.row + direction[0];
     let newCol = this.position.col + direction[1];
     if (newRow < 0 || newRow > 3 || newCol < 0 || newCol > 3) {
@@ -40,6 +41,7 @@ export function Player(name) {
 
   // Returns Bool determinining if attack is valid
   this.canAttack = tile => {
+    if (this.actions == 0) return false;
     // check if enemies in current tile
     if (tile.enemies.length > 0) {
       if (this.weapons.length > 0) {
@@ -52,6 +54,7 @@ export function Player(name) {
   }
 
   this.canSearch = tile => {
+    if (this.actions == 0) return false;
     return tile.type === 'room';
   }
 
