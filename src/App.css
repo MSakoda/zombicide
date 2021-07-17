@@ -7,6 +7,21 @@
   min-width:750px;
 }
 
+.weapons table {
+    margin-left:auto;
+    margin-right: auto;
+    margin-bottom: 5px;
+    border: 1px solid black;
+}
+.weapons table th {
+    border: 1px solid black;
+    padding: 2px;
+}
+.weapons table td {
+    border: 1px solid black;
+    padding: 2px;
+}
+
 .tile {
   width: 100px;
   height:100px;
@@ -68,6 +83,27 @@
     padding: 5px;
     position: absolute;
     background: gold;
+    content:attr(data-tooltip);
+    border-radius:5px;
+    border: 1px solid white;
+    left: 50%;
+    transform: translate(-50%, -100%);
+    transition: 50ms transform;
+}
+.enemies {
+    position: relative;
+}
+
+.enemies::before {
+    --scale: 0;
+}
+
+.enemies:hover::before {
+    z-index:1000;
+    min-width:200px;
+    padding: 5px;
+    position: absolute;
+    background: orangered;
     content:attr(data-tooltip);
     border-radius:5px;
     border: 1px solid white;

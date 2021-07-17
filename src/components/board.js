@@ -44,7 +44,7 @@ export function GameBoard(props) {
                 </div>
               }
               {tile.enemies.length > 0 &&
-                <div>Enemies: {tile.enemies.length}</div>
+                <div data-tooltip={tile.enemies.map(e => e.type).join(", ")} className="enemies">Enemies: {tile.enemies.length}</div>
               }
             </div>
           })}

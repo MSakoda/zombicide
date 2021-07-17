@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Weapons } from './weapon';
 
 export function Actions(props) {
 
@@ -99,9 +100,13 @@ export function Actions(props) {
                 </div>
             }
 
-            {showInfo &&
+            {showInfo && player.active &&
               <div>
                 <div>Info</div>
+                { player.weapons.length > 0 &&
+                    <Weapons weapons={player.weapons} />
+                }
+                <div></div>
                 <button
                   onClick={() => setShowInfo(false)}
                   className="btn btn-sm btn-primary">

@@ -13,7 +13,7 @@ import { Enemy } from './classes/Enemy';
 import { survivors } from './util';
 
 function App() {
-  console.log(`running App`);
+  console.log(`running App!!!`);
 
   let board1 = new Board();
   board1.buildBoard();
@@ -63,16 +63,40 @@ function App() {
         handleZombiePhase();
       } else {
         addLog('Phase is now Spawn Phase');
-        setPhase('spawn');
+        handleSpawnPhase();
       }
     } else if (phase === 'zombie') {
       addLog("Phase is now Spawn Phase");
-      setPhase('spawn');
+      handleSpawnPhase();
     } else if (phase === 'spawn') {
       setPhase('player');
       addLog("Phase is now Player Phase");
       handlePlayerPhase();
     }
+  }
+
+  function deactivatePlayers(){
+      players.forEach(player => {
+          player.active = false;
+          player.actions = 0;
+      })
+      setPlayers(prevPlayers => [...prevPlayers]);
+  }
+
+  function handleSpawnPhase() {
+      console.log(`handling spawn phase`);
+      deactivatePlayers();
+      // create an enemy for each spawn tile
+      // get the spawn tiles
+      board.spawnTiles.forEach(spawnTile => {
+          console.log(`spawnTile:`,spawnTile);
+          let enemy = createEnemy(spawnTile);
+      });
+      addLog("Spawned enemies.  Phase is now Player Phase");
+      setPhase('player');
+      handlePlayerPhase();
+
+
   }
 
   function handlePlayerPhase() {
@@ -87,6 +111,7 @@ function App() {
   }
 
   function handleZombiePhase() {
+      deactivatePlayers();
     console.log(`zombie phase`);
     /* // TODO:
       1. check if zombies exist
@@ -140,9 +165,12 @@ function App() {
     console.log(`running handleSearch with player:`,player);
     // get tile
     let playerTile = board.getTile(player.position.row, player.position.col);
-    player.search(playerTile);
+    player.search(playerTile,log => {
+        console.log("search callback log:",log);
+        addLog(log);
+    });
 
-    addLog(`${player.name} searched.`);
+    // addLog(`${player.name} searched.`);
     setPlayers(prevPlayers => [...prevPlayers]);
     callback();
   }
@@ -175,7 +203,7 @@ function App() {
     });
   }
 
-  function createEnemy() {
+  function createEnemy(tile) {
     let random = Math.floor(Math.random() * 4);
     let type = '';
     switch(random) {
@@ -193,10 +221,9 @@ function App() {
     }
     let randRow = Math.floor(Math.random() * 4);
     let randCol = Math.floor(Math.random() * 4);
-    let randTile = board.getTile(randRow,randCol);
-    let newEnemy = new Enemy({type:type, tile: randTile})
+    let newEnemy = new Enemy({type:type, tile: tile})
     console.log(`newEnemy:`,newEnemy);
-    randTile.enemies.push(newEnemy);
+    tile.enemies.push(newEnemy);
 
     // update enemies state
     setEnemies(prevEnemies => {

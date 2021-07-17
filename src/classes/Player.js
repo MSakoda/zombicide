@@ -114,7 +114,7 @@ export function Player(name) {
     console.log(`player actions after move:`,this.actions);
   }
 
-  this.search = (tile) => {
+  this.search = (tile,cb) => {
     // invalid input
     if (!(tile instanceof Tile)) {
       console.log(`must search on valid tile`);
@@ -127,7 +127,7 @@ export function Player(name) {
       if (item.type === 'weapon') {
         let weapon = new Weapon(item);
         this.weapons.push(weapon);
-        console.log(`found ${weapon.name} and added to inventory`);
+        cb(`${this.name} searched the room, found a ${weapon.name}, and added to inventory`);
         this.actions -= 1;
       }
     } else {
