@@ -5,6 +5,7 @@ export function Actions(props) {
 
   const [moving, setMoving] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
+  const [showAttack, setShowAttack] = useState(false);
 
   const directions = [
     {
@@ -24,6 +25,18 @@ export function Actions(props) {
       move: [1, 0]
     },
   ]
+
+  function handleSelectWeapon(player, weapon){
+        console.log("running handleSelectWeapon with player:",player,"and weapon",weapon);
+        if (weapon.maxRange === 0) {
+            console.log("proceed to attack within player square");
+            props.handleAttackTile(player,weapon, data => {
+                console.log("data from callback:",data);
+            });
+        } else {
+            console.log("player may choose to attack in another nearby square");
+        }
+  }
 
   return (
     <div id="actions">
@@ -54,7 +67,7 @@ export function Actions(props) {
             }
             <div>
 
-            {props.phase === 'player' && !moving && !showInfo && player.active &&
+            {props.phase === 'player' && !moving && !showInfo && !showAttack && player.active &&
                 <div>
                     <div>
                       <button
@@ -87,6 +100,7 @@ export function Actions(props) {
                     <div>
                       <button
                         className="m-1 btn btn-sm btn-primary"
+                        onClick={() => setShowAttack(true)}
                         disabled={!player.active || !canAttack}>
                           Attack
                       </button>
@@ -97,6 +111,19 @@ export function Actions(props) {
                           End Turn
                       </button>
                     </div>
+                </div>
+            }
+            {showAttack && player.active &&
+                <div>
+                    <h5>Which weapon to attack with?</h5>
+                    { player.weapons.map((weapon,i) => {
+                        return <button
+                            className="btn btn-sm btn-primary"
+                            onClick={() => handleSelectWeapon(player,weapon)}
+                            key={`weapon_${i}`}>{weapon.name}</button>
+                    }) }
+                    <br/>
+                <button className="mt-1 btn btn-sm btn-danger">Back</button>
                 </div>
             }
 

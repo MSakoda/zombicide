@@ -175,6 +175,57 @@ function App() {
     callback();
   }
 
+  function handleKillEnemy(enemy){
+      console.log("running handleKillEnemey with enemy:",enemy);
+  }
+
+  function handleAttackTile(player, weapon, callback){
+    console.log("running handleAttackTile with player:",player,"weapon:",weapon);
+    // get player's tile
+    let tile = board.getTile(player.position.row,player.position.col);
+
+    if (tile.enemies.length > 0) {
+        // look for walkers
+        let walkers = tile.enemies.filter(enemy => {
+            return enemy.type === 'walker';
+        });
+        if (walkers.length > 0) {
+            console.log("attacking walker");
+            handleKillEnemy(walkers[0],data => {
+                console.log("finished killing walker")
+            })
+        } else {
+            let fatties = tile.enemies.filter(enemy => {
+                return enemy.type === 'fatty';
+            })
+
+            if (fatties.length > 0) {
+                console.log("attacking fatty");
+                if (weapon.damage > 1) {
+                    handleKillEnemy(fatties[0],data => {
+                        console.log('finished killing zombie')
+                    });
+                } else {
+                    addLog("Can not kill fatty with current weapon.  Must have at least 2 damage");
+                }
+            } else {
+                let aboms = tile.enemies.filter(enemy => {
+                    return enemy.type === "abom";
+                })
+
+                if (aboms.length > 0) {
+                    console.log("attacking abomonation");
+                } else {
+                    console.log("what are we attacking?:",tile.enemies);
+                }
+            }
+        }
+    } else {
+        console.log("No enemies to attack in tile.")
+    }
+    callback("complete");
+  }
+
   function handleCreatePlayer(name) {
     // create player
     let newPlayer = new Player(name);
@@ -204,21 +255,16 @@ function App() {
   }
 
   function createEnemy(tile) {
-    let random = Math.floor(Math.random() * 4);
-    let type = '';
-    switch(random) {
-      case 1:
-        type = 'fatty';
-        break;
-      case 2:
-        type = 'runner';
-        break;
-      case 3:
+    let random = Math.floor(Math.random() * 100);
+    let type = 'walker';
+    if (random <= 5) {
         type = 'abom';
-        break;
-      default:
-        type = 'walker';
+    } else if (random > 5 && random <= 25 ) {
+        type = 'fatty';
+    } else if (random > 25 && random <= 50) {
+        type = 'runner';
     }
+
     let randRow = Math.floor(Math.random() * 4);
     let randCol = Math.floor(Math.random() * 4);
     let newEnemy = new Enemy({type:type, tile: tile})
@@ -254,6 +300,7 @@ function App() {
                 board={board}
                 handleEndTurn={handleEndTurn}
                 handleSearch={handleSearch}
+                handleAttackTile={handleAttackTile}
                 handleMove={handleMove}
                 players={players} />
           </div>
